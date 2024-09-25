@@ -24,7 +24,7 @@ tab1, tab2 = st.tabs(["Single Point in Time", "Over Time"])
 
 # ----- TAB 1: Single Point in Time -----
 with tab1:
-    # Explanation Text in a White Box with an Orangey Border
+    # Explanation Text
     st.markdown(
         '''
         <style>
@@ -73,7 +73,6 @@ with tab1:
     st.markdown("### 📉 **PnL (Profit and Loss)**")
     st.success(f"PnL: **{pnl_value:.2f}**")
 
-    # Adding some space between sections
     st.markdown("<br>", unsafe_allow_html=True)
 
     # Greeks calculation
@@ -97,7 +96,7 @@ with tab1:
         st.caption("Rho measures the sensitivity of the option price to changes in interest rates. It shows how much the option price will move with a 1% change in interest rates.")
 
         
-    # Heatmap Section (with background color to match Streamlit theme but lighter for better contrast)
+    # Heatmap Section
     st.markdown("### 🌡️ **Option Price Heatmap**")
 
     vol_range = np.arange(0.00, 1.0, 0.05)
@@ -110,13 +109,13 @@ with tab1:
 
     fig, ax = plt.subplots(figsize=(10, 6))
 
-    # Set heatmap with lighter background color for better contrast
+    
     sns.heatmap(heatmap_data, annot=True, fmt=".2f", xticklabels=np.round(price_range, 2), 
                 yticklabels=np.round(vol_range, 2), cmap="coolwarm", ax=ax, annot_kws={"size": 7})
 
-    # Change background to a lighter color, for example light grey
-    ax.set_facecolor('#00000000')  # Lighter grey for plot background
-    fig.patch.set_facecolor('#00000000')  # Lighter grey for entire figure background
+    
+    ax.set_facecolor('#00000000') 
+    fig.patch.set_facecolor('#00000000')  
     ax.set_xlabel('Stock Price')
     ax.set_ylabel('Volatility')
     ax.set_title(f'{option_type.capitalize()} Price Heatmap')
@@ -126,7 +125,7 @@ with tab1:
 
 # ----- TAB 2: Visualizing Over Time -----
 with tab2:
-    # Explanation Text in a White Box with an Orangey Border
+    # Explanation Text
     st.markdown(
         '''
         <div class="explanation-box">
@@ -196,7 +195,7 @@ with tab2:
         greeks = option_greeks(stock_price, K_viz, T_viz, r_viz, volatility_viz, option_type_viz)
         greeks_df.append(greeks)
         
-    # Explanation Text in a White Box with an Orangey Border
+    # Explanation Text
     st.markdown(
         '''
         <style>
