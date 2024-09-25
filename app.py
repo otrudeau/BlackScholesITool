@@ -23,19 +23,18 @@ linkedin_logo = load_image_as_link("src/linkedin_logo.png", "https://www.linkedi
 # Streamlit page configuration
 st.set_page_config(page_title="Black-Scholes Intuition Tool", layout="wide")
 
-# Header with LinkedIn logo and profile link
+# Banner with LinkedIn and name
 st.markdown(
-    f"""
-    <div style='display: flex; align-items: center;'>
-        <h1>Black-Scholes Intuition Tool</h1>
+    """
+    <div style="display:flex; align-items:center; justify-content:start;">
+        <h2 style="font-size: 36px;">Black-Scholes Intuition Tool</h2>
     </div>
-    <div style='display: flex; align-items: center;'>
-        <p>Created by: Olivier Trudeau</p>
-        {linkedin_logo}
-        <a href="https://www.linkedin.com/in/otrudeau" target="_blank" style="text-decoration:none; font-size: 18px; margin-left: 5px;">LinkedIn</a>
+    <div style="display:flex; align-items:center; justify-content:start; margin-top: 10px;">
+        <span style="font-size: 16px; font-weight: bold; margin-right: 10px;">Created by:</span>
+        <img src='data:image/png;base64,{}' class='img-fluid' width=25 height=25 style="margin-right: 10px"/>
+        <a href="https://www.linkedin.com/in/otrudeau" style="font-size: 16px; font-weight: bold; text-decoration:none;">Olivier Trudeau</a>
     </div>
-    """, unsafe_allow_html=True
-)
+    """.format(encoded_image), unsafe_allow_html=True)
 
 # Create tabs for different sections
 tab1, tab2 = st.tabs(["Single Point in Time", "Over Time"])
