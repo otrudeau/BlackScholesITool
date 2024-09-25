@@ -15,8 +15,8 @@ from src.pnl import pnl
 from src.strategies import single_leg_strategy, multi_leg_strategy
 from src.data import get_stock_data
 
-# Set Streamlit page configuration
-st.set_page_config(page_title="Black-Scholes Intuition Tool", layout="wide")
+# Set Streamlit page configuration with automatic dark mode
+st.set_page_config(page_title="Black-Scholes Intuition Tool", layout="wide", initial_sidebar_state="collapsed")
 
 # Load LinkedIn logo
 linkedin_logo_path = "src/linkedin_logo.png"
@@ -25,17 +25,18 @@ buffered = io.BytesIO()
 linkedin_logo.save(buffered, format="PNG")
 encoded_logo = base64.b64encode(buffered.getvalue()).decode()
 
-# Custom CSS to adjust theme dynamically
+# Custom CSS to adjust theme dynamically for fonts and the heatmap
 st.markdown(f"""
     <style>
-    /* Adjusting text color dynamically */
-    html[theme="light"] {{
-        --primary-color: black;
-        --secondary-color: #6e6e6e;
-    }}
     html[theme="dark"] {{
         --primary-color: white;
         --secondary-color: #e0e0e0;
+        --heatmap-bg-color: transparent;
+    }}
+    html[theme="light"] {{
+        --primary-color: black;
+        --secondary-color: #6e6e6e;
+        --heatmap-bg-color: transparent;
     }}
 
     .header {{
@@ -127,20 +128,35 @@ with tab1:
         st.caption("Theta represents time decay.")
         st.info(f"**Vega (V):** {greeks['Vega']:.4f}")
         st.caption("Vega represents sensitivity to volatility.")
+        st.info(f"**Rho (ρ):** {greeks['Rho']:.4f}")
+        st.caption("Rho measures the sensitivity of the option price to changes in interest rates.")
 
-    # Set heatmap with text color matching the theme
+    # Heatmap Section
+    st.markdown("### 🌡️ **Option Price Heatmap**")
+    vol_range = np.arange(0.00, 1.0, 0.05)
+    price_range = np.linspace(10, 150, 20)
+    heatmap_data = np.zeros((len(vol_range), len(price_range)))
+
+    for i, vol in enumerate(vol_range):
+        for j, price in enumerate(price_range):
+            heatmap_data[i, j] = black_scholes(price, K, T, r, vol, option_type)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
     sns.heatmap(heatmap_data, annot=True, fmt=".2f", xticklabels=np.round(price_range, 2), 
                 yticklabels=np.round(vol_range, 2), cmap="coolwarm", ax=ax, annot_kws={"size": 7})
 
-    ax.set_facecolor('#00000000')  # Transparent plot background
-    fig.patch.set_facecolor('#00000000')  # Transparent figure background
-    plt.xticks(color=text_color)  # X-axis tick labels color
-    plt.yticks(color=text_color)  # Y-axis tick labels color
-    ax.set_xlabel('Stock Price', color=text_color)
-    ax.set_ylabel('Volatility', color=text_color)
-    ax.set_title(f'{option_type.capitalize()} Price Heatmap', color=text_color)
+        # Set the heatmap background and text colors
+    ax.set_facecolor((0, 0, 0, 0))  # Transparent-like effect with RGBA
+    fig.patch.set_facecolor((0, 0, 0, 0))  # Transparent figure background with RGBA
+    plt.xticks(color='black' if st.get_option('theme.base') == 'light' else 'white')  # Dynamic text color for X-axis
+    plt.yticks(color='black' if st.get_option('theme.base') == 'light' else 'white')  # Dynamic text color for Y-axis
+    ax.set_xlabel('Stock Price', color='black' if st.get_option('theme.base') == 'light' else 'white')
+    ax.set_ylabel('Volatility', color='black' if st.get_option('theme.base') == 'light' else 'white')
+    ax.set_title(f'{option_type.capitalize()} Price Heatmap', color='black' if st.get_option('theme.base') == 'light' else 'white')
 
     st.pyplot(fig)
+
 
 
 # ----- TAB 2: Visualizing Over Time -----
@@ -153,7 +169,7 @@ with tab2:
             background-color: rgba(255, 165, 0, 0.1);
             border: 2px solid orange;
             padding: 15px;
-            color: {text_color};
+            color: var(--primary-color);
             border-radius: 5px;
             margin-bottom: 20px;
         }}
