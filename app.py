@@ -32,11 +32,13 @@ st.markdown(f"""
         --primary-color: white;
         --secondary-color: #e0e0e0;
         --heatmap-bg-color: transparent;
+        --legend-bg-color: white;
     }}
     html[theme="light"] {{
         --primary-color: black;
         --secondary-color: #6e6e6e;
         --heatmap-bg-color: transparent;
+        --legend-bg-color: black;
     }}
 
     .header {{
@@ -71,7 +73,7 @@ st.markdown(f"""
     </style>
     <div class="header">Black-Scholes Intuition Tool</div>
     <div class="created-by">Created by:</div>
-    <img src='data:image/png;base64,{encoded_logo}' class='linkedin-logo'><a href="https://www.linkedin.com/in/otrudeau" class="name-link">Olivier Trudeau</a>
+    <img src='data:image/png;base64,{encoded_logo}' class='linkedin-logo'><a href="https://www.linkedin.com/in/otrudeau" class="name-link">Olivier Trudeau</a><br><br>
     """, unsafe_allow_html=True)
 
 # Tabs for Single Point in Time and Over Time
@@ -141,23 +143,34 @@ with tab1:
         for j, price in enumerate(price_range):
             heatmap_data[i, j] = black_scholes(price, K, T, r, vol, option_type)
 
+       # Create the heatmap
     fig, ax = plt.subplots(figsize=(10, 6))
 
     sns.heatmap(heatmap_data, annot=True, fmt=".2f", xticklabels=np.round(price_range, 2), 
                 yticklabels=np.round(vol_range, 2), cmap="coolwarm", ax=ax, annot_kws={"size": 7})
 
-        # Set the heatmap background and text colors
+    # Set the heatmap background and text colors
     ax.set_facecolor((0, 0, 0, 0))  # Transparent-like effect with RGBA
     fig.patch.set_facecolor((0, 0, 0, 0))  # Transparent figure background with RGBA
-    plt.xticks(color='black' if st.get_option('theme.base') == 'light' else 'white')  # Dynamic text color for X-axis
-    plt.yticks(color='black' if st.get_option('theme.base') == 'light' else 'white')  # Dynamic text color for Y-axis
-    ax.set_xlabel('Stock Price', color='black' if st.get_option('theme.base') == 'light' else 'white')
-    ax.set_ylabel('Volatility', color='black' if st.get_option('theme.base') == 'light' else 'white')
-    ax.set_title(f'{option_type.capitalize()} Price Heatmap', color='black' if st.get_option('theme.base') == 'light' else 'white')
+
+    # Color for ticks and labels dynamically based on theme
+    tick_color = 'black' if st.get_option('theme.base') == 'light' else 'white'
+    
+    # Adjust tick colors on X and Y axes
+    plt.xticks(color=tick_color)  # Dynamic text color for X-axis
+    plt.yticks(color=tick_color)  # Dynamic text color for Y-axis
+
+    # Set X and Y axis labels and title
+    ax.set_xlabel('Stock Price', color=tick_color)
+    ax.set_ylabel('Volatility', color=tick_color)
+    ax.set_title(f'{option_type.capitalize()} Price Heatmap', color=tick_color)
+
+    # Set colorbar and adjust its label and ticks color
+    cbar = ax.collections[0].colorbar
+    cbar.ax.yaxis.set_tick_params(color=tick_color)  # Set color for the colorbar ticks
+    plt.setp(cbar.ax.yaxis.get_ticklabels(), color=tick_color)  # Set color for colorbar labels
 
     st.pyplot(fig)
-
-
 
 # ----- TAB 2: Visualizing Over Time -----
 with tab2:
@@ -194,7 +207,7 @@ with tab2:
     ticker_viz = st.text_input('Enter Stock Ticker (e.g., AAPL):', value="AAPL", key="ticker_viz")
     col1, col2 = st.columns(2)
     with col1:
-        K_viz = st.slider('🔑 Strike Price (K)', 50, 150, 100, key="strike_viz")
+        K_viz = st.slider('🔑 Strike Price (K)', 50.0, 150.0, 100.0, key="strike_viz")
         r_viz = st.slider('📉 Risk-Free Rate (r)', 0.0, 0.1, 0.05, key="rate_viz")
     with col2:
         T_viz = st.slider('⏳ Time to Expiry (Years)', 0.1, 5.0, 1.0, key="time_viz")
