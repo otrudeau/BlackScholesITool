@@ -47,7 +47,33 @@ A Python-based web app built with Streamlit to help visualize option pricing, Pn
    ```bash
    pip install -r requirements.txt
 
+--
 
 ## 🚀 Running the Application
+
+1. Ensure you are in the virtual environment:
+   ```bash
+   source venv/bin/activate  # On macOS/Linux
+   venv\Scripts\activate     # On Windows
+
+2. Run the Streamlit app:
+   ```bash
+   streamlit run app.py
+
+--
+
+## 🧠 How to Use
+
+**Single Point in Time**: Adjust the Stock Price, Strike Price, Volatility, Risk-Free Rate, and Time to Expiry sliders to recalculate the option price, PnL, and Greeks dynamically. View the Heatmap to see how the price varies with different stock prices and volatilities.
+
+**Visualizing Over Time**:
+
+Enter a stock ticker and adjust parameters to fetch historical stock data.
+Hover over the chart to see real-time Greeks updates and track how the option price evolves.
+
+3. 
+
+
+
 
 
