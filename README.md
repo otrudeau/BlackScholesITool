@@ -47,7 +47,7 @@ A Python-based web app built with Streamlit to help visualize option pricing, Pn
    ```bash
    pip install -r requirements.txt
 
---
+---
 
 ## 🚀 Running the Application
 
@@ -60,7 +60,7 @@ A Python-based web app built with Streamlit to help visualize option pricing, Pn
    ```bash
    streamlit run app.py
 
---
+---
 
 ## 🧠 How to Use
 
