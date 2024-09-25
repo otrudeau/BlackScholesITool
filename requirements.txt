@@ -1,17 +1,20 @@
 # Streamlit version
-streamlit>=1.24.0
+streamlit>=1.38.0
 
 # Data handling and manipulation
 pandas>=1.5.3
 
 # Numerical computing
 numpy>=1.24.0
-scipy>=1.10.0 
+scipy>=1.10.0
 
 # Plotting and visualization
 matplotlib>=3.5.0
 seaborn>=0.11.0
 altair>=4.2.0
+
+# Yahoo Finance API
+yfinance>=0.2.26 
 
 # Miscellaneous
 setuptools>=58.0.0
