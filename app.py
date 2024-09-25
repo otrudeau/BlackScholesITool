@@ -13,8 +13,21 @@ import altair as alt
 # Set Streamlit page configuration
 st.set_page_config(page_title="Black Scholes Intuition Tool", layout="wide")
 
-# App title and description
-st.title("Black Scholes Intuition Tool")
+# Add a logo and title
+st.markdown("""
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h1 style="flex-grow: 1;">Black Scholes Intuition Tool</h1>
+        <div style="display: flex; align-items: center;">
+            <p style="margin-right: 10px;">Created by:</p>
+            <a href="https://www.linkedin.com/in/otrudeau" target="_blank">
+                <img src="src/linkedin_logo.png" alt="LinkedIn" width="24" style="margin-right: 8px;">
+            </a>
+            <a href="https://www.linkedin.com/in/otrudeau" target="_blank">
+                <p style="font-size: 1.1em; margin: 0;"><strong>Olivier Trudeau</strong></p>
+            </a>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
 
 # Adding some space between sections for better readability
 st.markdown("<br>", unsafe_allow_html=True)
