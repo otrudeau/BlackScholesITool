@@ -25,67 +25,63 @@ buffered = io.BytesIO()
 linkedin_logo.save(buffered, format="PNG")
 encoded_logo = base64.b64encode(buffered.getvalue()).decode()
 
-# Display header with the name, LinkedIn logo, and extra space below name
+# Custom CSS to adjust theme dynamically
 st.markdown(f"""
     <style>
+    /* Adjusting text color dynamically */
+    html[theme="light"] {{
+        --primary-color: black;
+        --secondary-color: #6e6e6e;
+    }}
+    html[theme="dark"] {{
+        --primary-color: white;
+        --secondary-color: #e0e0e0;
+    }}
+
     .header {{
         font-size: 36px;
         font-weight: bold;
-        color: #ffffff;
+        color: var(--primary-color);
     }}
     .created-by {{
-        font-size: 18px;
-        color: #b0b0b0; /* Light grey for 'Created by' */
-        margin-bottom: 0px;
+        font-size: 16px;
+        color: var(--secondary-color);
+        margin-bottom: 10px;
     }}
     .name-link {{
         font-size: 20px;
         color: #1DA1F2;
         text-decoration: none;
-        padding-left: 0px;  /* Remove extra space */
-        vertical-align: middle; /* Aligns name with logo */
+        padding-left: 10px;
     }}
     .linkedin-logo {{
         width: 25px;
-        vertical-align: middle;  /* Aligns logo with the name */
-        margin-right: 5px; /* Keep some margin to ensure logo and name flow */
+        vertical-align: middle;
+        margin-left: 5px;
+    }}
+    .explanation-box {{
+        background-color: rgba(255, 165, 0, 0.1);
+        border: 2px solid orange;
+        padding: 15px;
+        color: var(--primary-color);
+        border-radius: 5px;
+        margin-bottom: 20px;
     }}
     </style>
     <div class="header">Black-Scholes Intuition Tool</div>
-    <br> <!-- Add a line break between the title and created by -->
-    <div class="created-by">
-        Created by:
-    </div>
-    <div>
-        <img src='data:image/png;base64,{encoded_logo}' class="linkedin-logo"/>
-        <a href="https://www.linkedin.com/in/otrudeau" class="name-link">Olivier Trudeau</a>
-    </div>
-    <br>
+    <div class="created-by">Created by:</div>
+    <img src='data:image/png;base64,{encoded_logo}' class='linkedin-logo'><a href="https://www.linkedin.com/in/otrudeau" class="name-link">Olivier Trudeau</a>
     """, unsafe_allow_html=True)
-
 
 # Tabs for Single Point in Time and Over Time
 tab1, tab2 = st.tabs(["Single Point in Time", "Over Time"])
 
-
 # ----- TAB 1: Single Point in Time -----
 with tab1:
-    # Explanation Text in a White Box with an Orangey Border
     st.markdown(
         '''
-        <style>
-        .explanation-box {
-            background-color: rgba(255, 165, 0, 0.1);
-            border: 2px solid orange;
-            padding: 15px;
-            color: white;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        </style>
         <div class="explanation-box">
-            Adjusting parameters will dynamically recalculate the option price, PnL, greeks and the heatmap below, 
-            helping you understand how each factor affects option pricing.
+            Adjusting parameters will dynamically recalculate the option price, PnL, greeks, and the heatmap below, helping you understand how each factor affects option pricing.
         </div>
         ''',
         unsafe_allow_html=True
@@ -93,7 +89,6 @@ with tab1:
     
     st.markdown("### 🔧 **Pricing Inputs**")
     
-    # Inputs for option pricing parameters (Single Point in Time)
     col1, col2 = st.columns(2)
     with col1:
         S = st.slider('📈 Stock Price (S)', 0, 150, 100, key="price_single")
@@ -105,78 +100,64 @@ with tab1:
     volatility = st.slider('🌪️ Volatility (σ)', 0.0, 1.0, 0.2, key="volatility_single")
     option_type = st.selectbox('Option Type', ['call', 'put'], key="option_single")
 
-    # Adding some space between sections
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Calculate current option price for the user-input stock price
+    # Calculate current option price
     current_price = black_scholes(S, K, T, r, volatility, option_type)
     st.markdown("### 📈 **Current Option Price**")
     st.info(f"Current {option_type.capitalize()} Price: **{current_price:.2f}**")
 
-    # PnL calculation
     purchase_price = st.number_input('💰 Option Purchase Price', value=10.0, key="purchase_price")
     pnl_value = pnl(purchase_price, current_price, option_type)
     st.markdown("### 📉 **PnL (Profit and Loss)**")
     st.success(f"PnL: **{pnl_value:.2f}**")
 
-    # Adding some space between sections
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Greeks calculation
     greeks = option_greeks(S, K, T, r, volatility, option_type)
     st.markdown("### ⚙️ **Greeks**")
     col1, col2 = st.columns(2)
     with col1:
         st.info(f"**Delta (Δ):** {greeks['Delta']:.4f}")
         st.caption("Delta represents the change in option price with a $1 move in the stock price.")
-        
         st.info(f"**Gamma (Γ):** {greeks['Gamma']:.4f}")
-        st.caption("Gamma measures the rate of change of Delta. It shows how much Delta will change with a $1 move in the stock price.")
+        st.caption("Gamma measures the rate of change of Delta.")
     with col2:
         st.info(f"**Theta (Θ):** {greeks['Theta']:.4f}")
-        st.caption("Theta represents time decay. It measures how much the option price decreases each day as the expiration date approaches.")
-
+        st.caption("Theta represents time decay.")
         st.info(f"**Vega (V):** {greeks['Vega']:.4f}")
-        st.caption("Vega represents the sensitivity of the option price to changes in volatility. It shows how much the price will move with a 1% change in volatility.")
+        st.caption("Vega represents sensitivity to volatility.")
 
-        st.info(f"**Rho (ρ):** {greeks['Rho']:.4f}")
-        st.caption("Rho measures the sensitivity of the option price to changes in interest rates. It shows how much the option price will move with a 1% change in interest rates.")
-
-        
-    # Heatmap Section (with background color to match Streamlit theme but lighter for better contrast)
-    st.markdown("### 🌡️ **Option Price Heatmap**")
-
-    vol_range = np.arange(0.00, 1.0, 0.05)
-    price_range = np.linspace(10, 150, 20)
-    heatmap_data = np.zeros((len(vol_range), len(price_range)))
-
-    for i, vol in enumerate(vol_range):
-        for j, price in enumerate(price_range):
-            heatmap_data[i, j] = black_scholes(price, K, T, r, vol, option_type)
-
-    fig, ax = plt.subplots(figsize=(10, 6))
-
-    # Set heatmap with lighter background color for better contrast
+    # Set heatmap with text color matching the theme
     sns.heatmap(heatmap_data, annot=True, fmt=".2f", xticklabels=np.round(price_range, 2), 
                 yticklabels=np.round(vol_range, 2), cmap="coolwarm", ax=ax, annot_kws={"size": 7})
 
-    # Change background to a lighter color, and axis labels to white
-    ax.set_facecolor('#00000000')  # Lighter grey for plot background
-    fig.patch.set_facecolor('#00000000')  # Lighter grey for entire figure background
-    ax.set_xlabel('Stock Price', color='white')  # Axis labels in white
-    ax.set_ylabel('Volatility', color='white')  # Axis labels in white
-    ax.set_title(f'{option_type.capitalize()} Price Heatmap', color='white')
-    ax.tick_params(colors='white')  # Tick labels in white
+    ax.set_facecolor('#00000000')  # Transparent plot background
+    fig.patch.set_facecolor('#00000000')  # Transparent figure background
+    plt.xticks(color=text_color)  # X-axis tick labels color
+    plt.yticks(color=text_color)  # Y-axis tick labels color
+    ax.set_xlabel('Stock Price', color=text_color)
+    ax.set_ylabel('Volatility', color=text_color)
+    ax.set_title(f'{option_type.capitalize()} Price Heatmap', color=text_color)
 
     st.pyplot(fig)
-
 
 
 # ----- TAB 2: Visualizing Over Time -----
 with tab2:
     # Explanation Text in a White Box with an Orangey Border
     st.markdown(
-        '''
+        f'''
+        <style>
+        .explanation-box {{
+            background-color: rgba(255, 165, 0, 0.1);
+            border: 2px solid orange;
+            padding: 15px;
+            color: {text_color};
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }}
+        </style>
         <div class="explanation-box">
             These inputs will impact the Option Price graph below. Adjusting parameters will show how option pricing evolves.
         </div>
@@ -184,10 +165,7 @@ with tab2:
         unsafe_allow_html=True
     )
     
-    st.markdown("### 🪛 **Pricing Inputs**")
-
-    # Adding some space between sections
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(f"### 🪛 **Pricing Inputs**", unsafe_allow_html=True)
 
     # Date range for stock data visualization
     col5, col6 = st.columns(2)
@@ -220,7 +198,7 @@ with tab2:
     stock_data.set_index('Date', inplace=True)
 
     # Display Stock Price Chart using Altair
-    st.markdown(f"### 📊 **{ticker_viz.upper()} Stock Price**")
+    st.markdown(f"### 📊 **{ticker_viz.upper()} Stock Price**", unsafe_allow_html=True)
     stock_chart = alt.Chart(stock_data.reset_index()).mark_line().encode(
         x=alt.X('Date:T', axis=alt.Axis(labelAngle=-45)),
         y='Close',
@@ -232,7 +210,7 @@ with tab2:
     st.altair_chart(stock_chart, use_container_width=True)  # Full width
 
     # Add heading for option price chart
-    st.markdown(f"### 📈 **{ticker_viz.upper()} Option Price**")
+    st.markdown(f"### 📈 **{ticker_viz.upper()} Option Price**", unsafe_allow_html=True)
 
     # Calculate option price for each day
     option_prices = []
@@ -244,26 +222,6 @@ with tab2:
         greeks = option_greeks(stock_price, K_viz, T_viz, r_viz, volatility_viz, option_type_viz)
         greeks_df.append(greeks)
         
-    # Explanation Text in a White Box with an Orangey Border
-    st.markdown(
-        '''
-        <style>
-        .explanation-box {
-            background-color: rgba(255, 165, 0, 0.1);
-            border: 2px solid orange;
-            padding: 15px;
-            color: white;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        </style>
-        <div class="explanation-box">
-            Hover over each data point to see greeks change in real-time.
-        </div>
-        ''',
-        unsafe_allow_html=True
-    )
-
     # Display Option Price Chart using Altair
     option_price_df = pd.DataFrame({
         'Date': stock_data.index,
@@ -275,7 +233,6 @@ with tab2:
         'Rho': [g['Rho'] for g in greeks_df]
     }).set_index('Date')
 
-    # Display the Greeks in real-time hover
     option_chart = alt.Chart(option_price_df.reset_index()).mark_line().encode(
         x=alt.X('Date:T', axis=alt.Axis(labelAngle=-45)),
         y='Option Price',
