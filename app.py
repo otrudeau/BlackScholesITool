@@ -11,34 +11,31 @@ from src.pnl import pnl
 from src.strategies import single_leg_strategy, multi_leg_strategy
 from src.data import get_stock_data
 
-# Function to load an image and convert to base64 for embedding
-def load_image_as_link(image_path, link_url):
-    with open(image_path, "rb") as image_file:
-        encoded_image = base64.b64encode(image_file.read()).decode()
-    return f'<a href="{link_url}" target="_blank"><img src="data:image/png;base64,{encoded_image}" width="30"></a>'
+# Load LinkedIn logo and encode it to base64
+linkedin_logo_path = "src/linkedin_logo.png"
+with open(linkedin_logo_path, "rb") as image_file:
+    encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
 
-# Load LinkedIn logo and link
-linkedin_logo = load_image_as_link("src/linkedin_logo.png", "https://www.linkedin.com/in/otrudeau")
-
-# Streamlit page configuration
+# Set Streamlit page configuration
 st.set_page_config(page_title="Black-Scholes Intuition Tool", layout="wide")
 
-# Banner with LinkedIn and name
+# App title and author section
 st.markdown(
-    """
-    <div style="display:flex; align-items:center; justify-content:start;">
-        <h2 style="font-size: 36px;">Black-Scholes Intuition Tool</h2>
+    f"""
+    <div style="display:flex; align-items:center;">
+        <h1 style="font-size:36px;">Black-Scholes Intuition Tool</h1>
     </div>
-    <div style="display:flex; align-items:center; justify-content:start; margin-top: 10px;">
-        <span style="font-size: 16px; font-weight: bold; margin-right: 10px;">Created by:</span>
-        <img src='data:image/png;base64,{}' class='img-fluid' width=25 height=25 style="margin-right: 10px"/>
-        <a href="https://www.linkedin.com/in/otrudeau" style="font-size: 16px; font-weight: bold; text-decoration:none;">Olivier Trudeau</a>
+    <div style="display:flex; align-items:center;">
+        <span style="font-size:20px;">Created by: <b>Olivier Trudeau</b></span>
+        <img src='data:image/png;base64,{encoded_image}' class='img-fluid' width=25 style="margin-left: 5px;"/>
+        <a href="https://www.linkedin.com/in/otrudeau" style="font-size:20px; margin-left: 5px;">LinkedIn</a>
     </div>
-    """.format(encoded_image), unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True
+)
 
-# Create tabs for different sections
+# Create tabs for Single Point in Time and Over Time analysis
 tab1, tab2 = st.tabs(["Single Point in Time", "Over Time"])
-
 # ----- TAB 1: Single Point in Time -----
 with tab1:
     st.markdown("### 🔧 **Pricing Inputs**")
