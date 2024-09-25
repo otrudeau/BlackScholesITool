@@ -1,14 +1,15 @@
-Black Scholes Intuition Tool
+**Black Scholes Intuition Tool**
 
 This tool provides an intuitive way to explore option pricing using the Black-Scholes model. It is designed to help users understand how different parameters (such as stock price, volatility, time to expiry, etc.) affect option prices, Greeks, PnL, and price heatmaps.
 
-Features
+**Features**
 
 Single Point in Time: Provides a snapshot of an option’s price, Greeks, PnL, and a heatmap based on user-defined parameters.
 
 Visualizing Over Time: Allows users to input a stock ticker and visualize how the option price evolves over a date range, along with the Greeks.
 
-Technologies Used
+
+**Technologies Used:**
 
 Streamlit: For creating the user interface.
 Altair: For plotting stock and option price charts.
@@ -17,7 +18,7 @@ Pandas: For handling stock data and time series.
 Numpy: For numerical operations in Black-Scholes calculations.
 
 
-Installation
+**Installation**
 
 Clone the repository:
 
@@ -38,7 +39,9 @@ Run the app:
 
 streamlit run app.py
 
-How to Use
+
+
+**How to Use:**
 
 1. Single Point in Time
 
@@ -58,7 +61,7 @@ Stock Price Visualization: Enter a stock ticker and date range to see historical
 Option Price Visualization: See how the option price and Greeks evolve over the selected time range.
 
 
-Folder Structure
+**Folder Structure**
 
 
 ProjectOptionPricer/
@@ -76,23 +79,8 @@ ProjectOptionPricer/
 └── README.md                 # Project overview (this file)
 
 
-Requirements
 
-The following packages are required to run the tool. They are listed in requirements.txt:
-
-streamlit==1.23.0
-pandas==1.5.3
-numpy==1.23.5
-matplotlib==3.7.1
-seaborn==0.12.2
-altair==4.2.2
-yfinance==0.2.18 (for fetching stock data)
-
-To-Do
+**To-Do:**
 
 Add more option strategies to the app.
 Implement additional visualizations for deeper analysis.
-
-
-License
-This project is licensed under the MIT License.
